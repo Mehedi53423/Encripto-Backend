@@ -1,4 +1,5 @@
-﻿using Encripto.Response;
+﻿using Encripto.Interfaces;
+using Encripto.Response;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,19 +9,26 @@ namespace Encripto.Controllers
     [ApiController]
     public class EncriptoController : ControllerBase
     {
+        private readonly IEncripto _encripto;
+
+        public EncriptoController(IEncripto encripto)
+        {
+            _encripto = encripto;
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(Response<string>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Create(string inputString)
+        public async Task<IActionResult> Encode(string inputString)
         {
-            var result = EncoderAndDecoder.Encode(inputString);
+            var result = await _encripto.Encode(inputString);
             return Ok(result);
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(Response<string>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Get(string inputString)
+        public async Task<IActionResult> Decode(string inputString)
         {
-            var result = EncoderAndDecoder.Decode(inputString);
+            var result = await _encripto.Decode(inputString);
             return Ok(result);
         }
     }
